@@ -104,7 +104,7 @@ if role == "patient":
         from medications import get_medications
     
         c1, c2, c3 = st.columns(3)
-            rate   = compute_adherence_rate(patient_id, 7)
+        rate   = compute_adherence_rate(patient_id, 7)
         streak = compute_streak(patient_id)
         meds   = get_medications(patient_id, active_only=True)
         c1.metric("7-day Adherence", f"{rate}%")
