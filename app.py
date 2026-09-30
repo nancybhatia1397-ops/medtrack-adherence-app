@@ -94,17 +94,17 @@ if role == "patient":
     render_due_banner(patient_id)
 
     if page == "🏠 Home":
-    full_name = (user.get("full_name") or "").strip()
-    first_name = full_name.split()[0] if full_name else "there"
-
-    st.title(f"Welcome back, {first_name}! 👋")
-    st.caption("Here's a quick snapshot of your adherence today.")
-
-    from adherence import compute_adherence_rate, compute_streak
-    from medications import get_medications
-
-    c1, c2, c3 = st.columns(3)
-        rate   = compute_adherence_rate(patient_id, 7)
+        full_name = (user.get("full_name") or "").strip()
+        first_name = full_name.split()[0] if full_name else "there"
+    
+        st.title(f"Welcome back, {first_name}! 👋")
+        st.caption("Here's a quick snapshot of your adherence today.")
+    
+        from adherence import compute_adherence_rate, compute_streak
+        from medications import get_medications
+    
+        c1, c2, c3 = st.columns(3)
+            rate   = compute_adherence_rate(patient_id, 7)
         streak = compute_streak(patient_id)
         meds   = get_medications(patient_id, active_only=True)
         c1.metric("7-day Adherence", f"{rate}%")
