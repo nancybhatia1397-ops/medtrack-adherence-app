@@ -5,7 +5,7 @@ load_dotenv()
 
 # ── Gemini API ────────────────────────────────────────────────────────────────
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
-GEMINI_MODEL   = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-3.8-flash"
 
 # ── Database ──────────────────────────────────────────────────────────────────
 DB_PATH = os.getenv("DB_PATH", "medication_tracker.db")
