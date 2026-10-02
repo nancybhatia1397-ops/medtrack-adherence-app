@@ -4,26 +4,35 @@ All higher-level logic lives in the feature modules.
 """
 import sqlite3
 import contextlib
+import streamlit as st
 from config import DB_PATH
 
 
 # ── Connection factory ────────────────────────────────────────────────────────
 
+@st.cache_resource
+def _get_shared_connection():
+    """Create ONE connection per app instance, reused across reruns."""
+    conn = sqlite3.connect(DB_PATH, check_same_thread=False, timeout=30)
+    conn.row_factory = sqlite3.Row
+    try:
+        conn.execute("PRAGMA journal_mode=WAL")
+    except sqlite3.OperationalError:
+        pass  # fall back to default journal mode if WAL isn't supported here
+    conn.execute("PRAGMA foreign_keys=ON")
+    return conn
+
+
 @contextlib.contextmanager
 def get_connection():
-    """Yield a thread-safe SQLite connection with WAL mode enabled."""
-    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA foreign_keys=ON")
+    """Yield the shared connection. Commits on success, rolls back on error."""
+    conn = _get_shared_connection()
     try:
         yield conn
         conn.commit()
     except Exception:
         conn.rollback()
         raise
-    finally:
-        conn.close()
 
 
 # ── Schema initialisation ─────────────────────────────────────────────────────
